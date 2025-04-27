@@ -1,89 +1,82 @@
-RNN for Text Prediction
-Overview
-This project implements a simple Recurrent Neural Network (RNN) for text prediction. The network is trained to predict the next word in a sequence of words. It uses the Tanh activation function and the softmax function for output prediction. The model is trained using backpropagation through time (BPTT) and gradient descent.
+# RNN for Text Prediction 
 
-Features
-RNN Architecture: A simple RNN with a hidden layer and output layer.
+This repository contains a very basic implementation of a Recurrent Neural Network (RNN) using NumPy. It's designed as a learning example to demonstrate the core concepts of RNNs, forward propagation, backward propagation (Backpropagation Through Time - BPTT), and training with gradient descent on a small, fixed text sequence.
 
-Text Prediction: The network predicts the next word in a sequence.
+## Overview
 
-Training: Trained using gradient descent with backpropagation.
+The script builds a simple RNN model trained to predict the next word in a specific phrase. It uses a minimal vocabulary derived from the phrase itself and trains the network over several epochs to minimize the error in predicting the target word.
 
-Softmax Output: Uses the softmax function for word prediction.
+The specific task hardcoded in the script is predicting the word "best" given the input sequence "barca is the".
 
-Dependencies
-Make sure you have Python and the following libraries installed:
+## How it Works
 
-bash
-Copy
-Edit
-pip install numpy
-How It Works
-Data Preparation:
+1.  **Data Preparation:**
+    *   A small list of words (`text = ["barca", "is", "the", "best"]`) defines the training data.
+    *   A vocabulary is created from these words.
+    *   Dictionaries are made to map words to integer indices and vice-versa.
+    *   The input text is converted into a sequence of indices.
+2.  **Model Initialization:**
+    *   The RNN has an input layer, a hidden layer, and an output layer.
+    *   The size of the input and output layers is determined by the vocabulary size.
+    *   A fixed `hidden_size` is chosen (10 in this case).
+    *   Weight matrices (`Wxh`, `Whh`, `Why`) and bias vectors (`bh`, `by`) are initialized with small random values or zeros.
+3.  **Forward Propagation:**
+    *   The input sequence ("barca is the") is processed one word at a time.
+    *   Each word is converted into a one-hot vector.
+    *   The network calculates the hidden state at each timestep using the current input and the previous hidden state. A `tanh` activation is used for the hidden layer.
+    *   The output layer calculates scores for each word in the vocabulary based on the current hidden state.
+    *   A `softmax` function converts these scores into probability distributions over the vocabulary.
+4.  **Loss Calculation:**
+    *   During training, the loss is calculated at the end of the input sequence (after processing "the").
+    *   The loss is the negative log-likelihood of the actual target word ("best").
+5.  **Backward Propagation (BPTT):**
+    *   Gradients are calculated starting from the output layer at the last timestep and propagated backward through time and through the network layers.
+    *   This determines how much each weight and bias contributed to the error.
+    *   Gradient clipping is applied to prevent exploding gradients.
+6.  **Weight Update:**
+    *   Weights and biases are updated using the calculated gradients and a specified `learning_rate`. This is the optimization step that allows the network to learn.
+7.  **Training Loop:**
+    *   The forward and backward propagation steps are repeated for a fixed number of `epochs`.
+    *   The hidden state from the end of one epoch's processing is carried over to the start of the next epoch for the *same* input sequence.
+8.  **Prediction:**
+    *   After training, the network is run through the input sequence ("barca is the") one last time using the learned weights.
+    *   The word with the highest probability at the last timestep's output is selected as the prediction.
 
-Text is tokenized into words.
+## Requirements
 
-Each word is converted into an integer index.
+*   Python 3.x
+*   NumPy library
 
-A sequence of words is used to predict the next word in the sequence.
+## Installation
 
-Network Architecture:
+1.  Clone this repository (or copy the code into a Python file).
+    ```bash
+    git clone <repository_url>
+    cd <repository_name>
+    ```
+2.  Install the required library:
+    ```bash
+    pip install numpy
+    ```
 
-The network has an input layer representing the vocabulary size.
+## Usage
 
-A hidden layer with a configurable size.
+1.  Save the provided Python code as a `.py` file (e.g., `simple_rnn.py`).
+2.  Run the script from your terminal:
+    ```bash
+    python simple_rnn.py
+    ```
 
-The output layer predicts the next word in the sequence, which corresponds to the vocabulary size.
+## Expected Output
 
-Forward Propagation:
-
-The network processes a sequence of word indices.
-
-The hidden state is updated at each timestep using the Tanh activation function.
-
-The output at each timestep is computed using the softmax function to predict the next word.
-
-Backward Propagation:
-
-The model computes the gradients using backpropagation and adjusts the weights using gradient descent.
-
-The gradients are clipped to avoid exploding gradients.
-
-Training:
-
-The model is trained for a specified number of epochs, and the loss is computed at regular intervals.
-
-Prediction:
-
-After training, the model predicts the next word in the sequence based on the learned weights.
-
-Code Structure
-one_hot(idx, size): Converts word index into a one-hot vector.
-
-softmax(x): Computes the softmax of the output.
-
-forward_propagation(inputs, h_prev): Performs the forward pass through the network.
-
-backward_propagation(xs, hs, ps, targets): Computes the gradients for backpropagation.
-
-Training Loop: The model is trained using gradient descent over a specified number of epochs.
-
-Example Output
-yaml
-Copy
-Edit
-Epoch 0, Loss: 1.1234
-Epoch 100, Loss: 0.9876
-Epoch 200, Loss: 0.7890
-...
-Predicted word: best
-How to Run
-Copy the provided code into a Python script file (e.g., rnn_text_prediction.py).
-
-Run the script:
-
-bash
-Copy
-Edit
-python rnn_text_prediction.py
-The model will be trained, and the predicted word will be displayed after the training.
+*   You will see the loss printed every 100 epochs during training, followed by the final predicted word:
+*   Starting Training...
+*   Epoch 0, Loss: ...
+*   Epoch 100, Loss: ...
+*   Epoch 200, Loss: ...
+*   ...
+*   Epoch 900, Loss: ...
+*   Training Finished.
+*   Making Prediction...
+*   Input sequence: barca is the best
+*   Predicted word: best
